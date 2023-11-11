@@ -1,0 +1,150 @@
+﻿<UserControl x:Class="Billiard4Life.View.Kho"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:Billiard4Life.View"
+             mc:Ignorable="d" 
+             TextElement.FontFamily="Comfortaa"
+             TextElement.FontSize="15"
+             d:DesignHeight="670" d:DesignWidth="1070">
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
+                  Margin="10 0 10 0">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBox Name="txtSearch"
+                             Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
+                             Grid.Row="0"
+                             Foreground="#3C6255"
+                             Margin="10 20 30 20"
+                             materialDesign:HintAssist.Hint="Tìm kiếm">
+                </TextBox>
+                <ComboBox materialDesign:HintAssist.Hint="Nhóm sản phẩm"
+                          Margin="10,6,30,6"
+                          Grid.Row="1"
+                          Foreground="#3C6255"
+                          ItemsSource="{Binding Groups}"
+                          SelectedItem="{Binding GroupSelected}"
+                          Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                </ComboBox>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="2"
+                                Command="{Binding DeleteCM}"
+                                Background="#3C6255"
+                                Margin="5 5 5 10"
+                                Foreground="#EAE7B1"
+                                FontSize="16"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Xóa">
+                    </Button>
+
+
+                    <Button Grid.Column="0"
+                                Command="{Binding CheckCM}"
+                                Background="#3C6255"
+                                Margin="5 5 10 10"
+                                Foreground="#EAE7B1"
+                                FontSize="16"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Kiểm tra">
+                    </Button>
+                    <Button Grid.Column="1"
+                                Command="{Binding ExportCM}"
+                                Background="#3C6255"
+                                Margin="5 5 10 10"
+                                Foreground="#EAE7B1"
+                                FontSize="16"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Xuất file">
+                    </Button>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="1"
+                                Command="{Binding AddCM}"
+                                Background="#3C6255"
+                                Margin="5 5 10 10"
+                                Foreground="#EAE7B1"
+                                FontSize="16"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Phiếu nhập mới">
+                    </Button>
+                    <Button Grid.Column="0"
+                                Command="{Binding DetailCM}"
+                                Background="#3C6255"
+                                Margin="5 5 10 10"
+                                Foreground="#EAE7B1"
+                                FontSize="16"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Content="Xem chi tiết">
+                    </Button>
+                </Grid>
+            </Grid>
+
+        </Grid>
+
+
+        <Grid Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ListView ItemsSource="{Binding ListWareHouse}"
+                              SelectedItem="{Binding Selected, Mode=OneWayToSource}"
+                              FontSize="17"
+                              Foreground="#3C6255"
+                              Margin="20 0 20 20">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding TenSanPham}"
+                                                Width="380"
+                                                Header="Tên sản phẩm" />
+                            <GridViewColumn DisplayMemberBinding="{Binding TonDu}"
+                                                Width="180"
+                                                Header="Tồn dư" />
+                            <GridViewColumn DisplayMemberBinding="{Binding DonVi}"
+                                                Width="180"
+                                                Header="Đơn vị" />
+                            <GridViewColumn DisplayMemberBinding="{Binding NhomSP}"
+                                                Width="230"
+                                                Header="Nhóm sản phẩm" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </ScrollViewer>
+
+        </Grid>
+    </Grid>
+</UserControl>
