@@ -25,11 +25,5 @@ namespace Billiard4Life.View
 
             DataContext = new ViewModel.NhapHangMoiViewModel();
         }
-        public NhapHangMoi(Billiard4Life.Models.Kho kho)
-        {
-            InitializeComponent();
-
-            DataContext = new ViewModel.NhapHangMoiViewModel(kho);
-        }
     }
 }

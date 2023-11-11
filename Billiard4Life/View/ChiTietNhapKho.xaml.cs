@@ -22,7 +22,7 @@ namespace Billiard4Life.View
         public ChiTietNhapKho(string itemName)
         {
             InitializeComponent();
-            DataContext = new ViewModel.ChiTietNhapKhoViewModel(itemName);
+            DataContext = new ViewModel.ChiTietNhapKhoViewModel();
         }
     }
 }
