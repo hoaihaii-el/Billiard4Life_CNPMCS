@@ -7,6 +7,7 @@ using Diacritics.Extensions;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Linq;
 
 namespace Billiard4Life.ViewModel
 {
@@ -160,7 +161,6 @@ namespace Billiard4Life.ViewModel
                 }
             });
         }
-
 
         #region attributes
         private ObservableCollection<KhuyenMai> khuyenMais = new ObservableCollection<KhuyenMai>();
