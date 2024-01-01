@@ -1,6 +1,7 @@
 ﻿using Billiard4Life.DataProvider;
 using Billiard4Life.Models;
 using Billiard4Life.State.Navigator;
+using RestaurantManagement.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,10 @@ using RestaurantManagement.View;
 using System.Windows.Media.Imaging;
 using Project;
 using System.Threading;
-using RestaurantManagement.ViewModel;
 
 namespace Billiard4Life.ViewModel
 {
+
     public class MainViewModel : BaseViewModel
     {
         public MainViewModel()
