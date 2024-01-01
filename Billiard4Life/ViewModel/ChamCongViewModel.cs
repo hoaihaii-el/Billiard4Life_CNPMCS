@@ -404,6 +404,21 @@ namespace Billiard4Life.ViewModel
             }
             return false;
         }
+        bool isFloat(string s)
+        {
+            if (s[0] < 48 || s[0] > 57) return false;
+            if (s[s.Length - 1] < 48 || s[s.Length - 1] > 57) return false;
+            int count = 0;
+            int i = 1;
+            while (i < s.Length)
+            {
+                if (s[i] == '.') count++;
+                if ((s[i] < 48 || s[i] > 57) && s[i] != '.') return false;
+                i++;
+            }
+            if (count > 1) return false;
+            return true;
+        }
         private void OpenConnect()
         {
             sqlCon = new SqlConnection(strCon);
