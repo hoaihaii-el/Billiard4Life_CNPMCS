@@ -49,4 +49,3 @@ namespace Billiard4Life.ViewModel
     }
 
 }
-}
