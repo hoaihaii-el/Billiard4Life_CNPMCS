@@ -1,70 +1,86 @@
-﻿namespace Billiard4Life.ViewModel
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Billiard4Life.Models;
+using System.Windows.Input;
+using Billiard4Life.DataProvider;
+using System.Windows.Forms;
+using System.Windows.Media.Imaging;
+using System.Windows.Controls;
+using System.Windows;
+using Billiard4Life.ViewModel;
+using Billiard4Life;
+
+namespace Billiard4Life.ViewModel
 {
     public class CaiDatViewModel : BaseViewModel
     {
-        public CaiDatViewModel()
+        public CaiDatViewModel(string MaNV, string ID, string password, string role)
         {
-            public CaiDatViewModel(string MaNV, string ID, string password, string role)
+            Role = role;
+            NhanVien = CaiDatDP.Flag.GetCurrentEmployee(MaNV, password);
+            CaiDatDP.Flag.LoadProfileImage(NhanVien);
+            UpdateInfoCommand = new RelayCommand<object>((p) => true, (p) =>
             {
-                Role = role;
+                CaiDatDP.Flag.UpdateInfo(NhanVien.HoTen, NhanVien.DiaChi, NhanVien.SDT, NhanVien.NgaySinh, NhanVien.MaNV);
+            });
+            CancelCommand = new RelayCommand<object>((p) => true, (p) =>
+            {
                 NhanVien = CaiDatDP.Flag.GetCurrentEmployee(MaNV, password);
                 CaiDatDP.Flag.LoadProfileImage(NhanVien);
-                UpdateInfoCommand = new RelayCommand<object>((p) => true, (p) =>
+            });
+            ChangeProfileImage = new RelayCommand<object>((p) => true, (p) =>
+            {
+                OpenFileDialog open = new OpenFileDialog();
+                open.Title = "Thay ảnh đại diện";
+                open.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" + "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" + "Portable Network Graphic (*.png)|*.png";
+
+                if (open.ShowDialog() == DialogResult.OK)
                 {
-                    CaiDatDP.Flag.UpdateInfo(NhanVien.HoTen, NhanVien.DiaChi, NhanVien.SDT, NhanVien.NgaySinh, NhanVien.MaNV);
-                });
-                CancelCommand = new RelayCommand<object>((p) => true, (p) =>
+                    BitmapImage bmi = new BitmapImage();
+                    bmi.BeginInit();
+                    bmi.CacheOption = BitmapCacheOption.OnLoad;
+                    bmi.UriSource = new Uri(open.FileName);
+                    bmi.EndInit();
+                    NhanVien.AnhDaiDien = bmi;
+
+                    MyMessageBox msb = new MyMessageBox("Đã thay đổi ảnh đại diện!");
+                    msb.Show();
+                }
+                CaiDatDP.Flag.ChangeProfileImage_SaveToDB(NhanVien, ID);
+            });
+            CurrentPasswordChangedCommand = new RelayCommand<PasswordBox>((p) => true, (p) =>
+            {
+                CurrentPassword = p.Password;
+            });
+            NewPasswordChangedCommand = new RelayCommand<PasswordBox>((p) => true, (p) =>
+            {
+                NewPassword = p.Password;
+            });
+            ConfirmPasswordChangedCommand = new RelayCommand<PasswordBox>((p) => true, (p) =>
+            {
+                ConfirmPassword = p.Password;
+            });
+            ChangePassword = new RelayCommand<object>((p) => true, (p) =>
+            {
+                if (PasswordValidation())
                 {
-                    NhanVien = CaiDatDP.Flag.GetCurrentEmployee(MaNV, password);
+                    NhanVien = CaiDatDP.Flag.GetCurrentEmployee(MaNV, NewPassword);
                     CaiDatDP.Flag.LoadProfileImage(NhanVien);
-                });
-                ChangeProfileImage = new RelayCommand<object>((p) => true, (p) =>
-                {
-                    OpenFileDialog open = new OpenFileDialog();
-                    open.Title = "Thay ảnh đại diện";
-                    open.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" + "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" + "Portable Network Graphic (*.png)|*.png";
-
-                    if (open.ShowDialog() == DialogResult.OK)
-                    {
-                        BitmapImage bmi = new BitmapImage();
-                        bmi.BeginInit();
-                        bmi.CacheOption = BitmapCacheOption.OnLoad;
-                        bmi.UriSource = new Uri(open.FileName);
-                        bmi.EndInit();
-                        NhanVien.AnhDaiDien = bmi;
-
-                        MyMessageBox msb = new MyMessageBox("Đã thay đổi ảnh đại diện!");
-                        msb.Show();
-                    }
-                    CaiDatDP.Flag.ChangeProfileImage_SaveToDB(NhanVien, ID);
-                });
-                CurrentPasswordChangedCommand = new RelayCommand<PasswordBox>((p) => true, (p) =>
-                {
-                    CurrentPassword = p.Password;
-                });
-                NewPasswordChangedCommand = new RelayCommand<PasswordBox>((p) => true, (p) =>
-                {
-                    NewPassword = p.Password;
-                });
-                ConfirmPasswordChangedCommand = new RelayCommand<PasswordBox>((p) => true, (p) =>
-                {
-                    ConfirmPassword = p.Password;
-                });
-                ChangePassword = new RelayCommand<object>((p) => true, (p) =>
-                {
-                    if (PasswordValidation())
-                    {
-                        NhanVien = CaiDatDP.Flag.GetCurrentEmployee(MaNV, NewPassword);
-                        CaiDatDP.Flag.LoadProfileImage(NhanVien);
-                        CaiDatDP.Flag.ChangePassword(NewPassword, ID);
-                    }
-                    return;
-                });
-                CloseWindowCommand = new RelayCommand<Window>((p) => true, (p) =>
-                {
-                    p.Close();
-                });
-            }
+                    CaiDatDP.Flag.ChangePassword(NewPassword, ID);
+                }
+                return;
+            });
+            CloseWindowCommand = new RelayCommand<Window>((p) => true, (p) =>
+            {
+                p.Close();
+            });
+        }
         #region attributes
         private NhanVien _nhanVien;
         private string _currentPassword;
