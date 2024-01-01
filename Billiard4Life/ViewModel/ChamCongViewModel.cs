@@ -1,12 +1,17 @@
 ﻿using Billiard4Life.Models;
-using OfficeOpenXml.Style;
+using System;
 using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
-using System.Windows.Forms;
 using System.Windows.Input;
-using System;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.IO;
+using System.Configuration;
+using System.Windows.Forms;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace Billiard4Life.ViewModel
 {
@@ -223,6 +228,197 @@ namespace Billiard4Life.ViewModel
                 CloseConnect();
             });
             #endregion
+        }
+        private void ListViewDisplay()
+        {
+            OpenConnect();
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT * FROM NHANVIEN ORDER BY MaNV ASC";
+            cmd.Connection = sqlCon;
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            ListStaff.Clear();
+            while (reader.Read())
+            {
+                string ma = reader.GetString(0);
+                string ten = reader.GetString(1);
+                string chucvu = reader.GetString(2);
+                string ft;
+                if (reader.GetBoolean(3)) ft = "Full-time";
+                else ft = "Part-time";
+
+                ListStaff.Add(new NhanVienCC(ma, ten, chucvu, ft));
+            }
+            reader.Close();
+
+            cmd.CommandText = "SELECT MaNV, SUM(SoGioCong) FROM CHITIETCHAMCONG WHERE MONTH(NgayCC) = " + GetMonth(MonthSelected) + " AND YEAR(NgayCC) = " + DateTime.Now.Year + " GROUP BY MaNV ORDER BY MaNV ASC";
+            cmd.Connection = sqlCon;
+            reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                string ma = reader.GetString(0);
+                float tonggio = (float)reader.GetDouble(1);
+                foreach (NhanVienCC nv in ListStaff)
+                {
+                    if (nv.MaNV == ma) nv.TongSoGio = tonggio;
+                }
+            }
+            reader.Close();
+
+            CloseConnect();
+        }
+        private void GetListMonth()
+        {
+            ListMonth.Clear();
+            int month = 1;
+            while (month <= DateTime.Now.Month)
+            {
+                ListMonth.Add(month.ToString() + "/" + DateTime.Now.Year.ToString());
+                month++;
+            }
+        }
+        private void GetListDay()
+        {
+            ListDay.Clear();
+            if (GetMonth(MonthSelected) == DateTime.Now.Month.ToString())
+            {
+                int day = 1;
+                while (day <= DateTime.Now.Day)
+                {
+                    ListDay.Add(GetMonth(MonthSelected) + "/" + day + "/" + DateTime.Now.Year);
+                    day++;
+                }
+            }
+            else
+            {
+                if (GetMonth(MonthSelected) == "1" || GetMonth(MonthSelected) == "3" || GetMonth(MonthSelected) == "5" || GetMonth(MonthSelected) == "7" || GetMonth(MonthSelected) == "8" || GetMonth(MonthSelected) == "10" || GetMonth(MonthSelected) == "12")
+                {
+                    int day = 1;
+                    while (day <= 31)
+                    {
+                        ListDay.Add(GetMonth(MonthSelected) + "/" + day + "/" + DateTime.Now.Year);
+                        day++;
+                    }
+                }
+                else
+                if (GetMonth(MonthSelected) == "4" || GetMonth(MonthSelected) == "6" || GetMonth(MonthSelected) == "9" || GetMonth(MonthSelected) == "11")
+                {
+                    int day = 1;
+                    while (day <= 30)
+                    {
+                        ListDay.Add(GetMonth(MonthSelected) + "/" + day + "/" + DateTime.Now.Year);
+                        day++;
+                    }
+                }
+                else
+                {
+                    int count;
+                    if (isLapYear(DateTime.Now.Year)) count = 29;
+                    else count = 28;
+                    int day = 1;
+                    while (day <= count)
+                    {
+                        ListDay.Add(day.ToString() + "/" + GetMonth(MonthSelected) + "/" + DateTime.Now.Year);
+                        day++;
+                    }
+                }
+            }
+        }
+        private void GetListCheck()
+        {
+            OpenConnect();
+
+            ListCheck.Clear();
+            foreach (NhanVienCC nv in ListStaff)
+            {
+                ListCheck.Add(new ChamCong(nv.MaNV));
+            }
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT * FROM CHITIETCHAMCONG WHERE NgayCC = '" + DaySelected + "' ORDER BY MaNV ASC";
+            cmd.Connection = sqlCon;
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                string ma = reader.GetString(0);
+                string ngay = reader.GetDateTime(1).ToShortDateString();
+                string gio = reader.GetDouble(2).ToString();
+                string note = reader.GetString(3);
+
+                foreach (ChamCong nv in ListCheck)
+                {
+                    if (nv.MaNV == ma)
+                    {
+                        nv.Set(ngay, gio, note);
+                    }
+                }
+            }
+            reader.Close();
+
+            cmd = new SqlCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT MaNV, NgayVaoLam FROM NHANVIEN ORDER BY MaNV ASC";
+            cmd.Connection = sqlCon;
+            reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                string maNV = reader.GetString(0);
+                string dateIn = reader.GetDateTime(1).ToShortDateString();
+                foreach (ChamCong nv in ListCheck)
+                {
+                    if (nv.MaNV == maNV)
+                    {
+                        if (Convert.ToDateTime(dateIn) > Convert.ToDateTime(DaySelected))
+                        {
+                            nv.Set(DaySelected, "0", "Chưa vào làm");
+                        }
+                    }
+                }
+            }
+            reader.Close();
+
+            CloseConnect();
+        }
+        private string GetMonth(string dt)
+        {
+            string temp = "";
+            int i = 0;
+            while (dt[i] != '/')
+            {
+                temp += dt[i];
+                i++;
+            }
+            return temp;
+        }
+        bool isLapYear(int nInput)
+        {
+            if ((nInput % 4 == 0 && nInput % 100 != 0) || nInput % 400 == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+        private void OpenConnect()
+        {
+            sqlCon = new SqlConnection(strCon);
+            if (sqlCon.State == ConnectionState.Closed)
+            {
+                sqlCon.Open();
+            }
+        }
+
+        private void CloseConnect()
+        {
+            if (sqlCon.State == ConnectionState.Open)
+            {
+                sqlCon.Close();
+            }
         }
     }
 }
