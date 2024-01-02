@@ -456,15 +456,8 @@ namespace Billiard4Life.ViewModel
             cmd.CommandText = strQuery;
             cmd.Connection = sqlCon;
             SqlDataReader reader = cmd.ExecuteReader();
-            ListWareHouse.Clear();
-            while (reader.Read())
-            {
-                string ten = reader.GetString(0);
-                float tondu = (float)reader.GetDouble(1);
-                string donvi = reader.GetString(3);
-                string nhom = reader.GetString(4);
-                ListWareHouse.Add(new Kho(ten, tondu, donvi, nhom));
-            }
+            
+            
 
             CloseConnect();
         }
