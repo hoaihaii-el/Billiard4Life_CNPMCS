@@ -202,15 +202,7 @@ namespace Billiard4Life.ViewModel
 
                     foreach (HoaDon temp in ListBillEx)
                     {
-                        col = 1;
-                        row++;
-                        ws.Cells[row, col++].Value = temp.SoHD;
-                        ws.Cells[row, col++].Value = temp.TenKH;
-                        ws.Cells[row, col++].Value = temp.SoGio;
-                        ws.Cells[row, col++].Value = temp.NgayHD;
-                        ws.Cells[row, countColumn].Value = temp.TriGia;
-
-                        ObservableCollection<ChiTietHoaDon> detailBills = HoaDonDP.Flag.GetDetailBill(temp.SoHD);
+                        
                         foreach (ChiTietHoaDon cthd in detailBills)
                         {
                             row++;
