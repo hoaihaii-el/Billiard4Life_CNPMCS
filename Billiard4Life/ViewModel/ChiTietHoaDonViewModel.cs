@@ -45,12 +45,12 @@ namespace Billiard4Life.ViewModel
             cmd.Connection = sqlCon;
             SqlDataReader reader = cmd.ExecuteReader();
 
-            
+            CTHD.Clear();
             while (reader.Read())
             {
                 string ten = reader.GetString(3);
                 string soluong = reader.GetInt16(2).ToString();
-                string gia = reader.GetString(4).ToString();
+                string gia = reader.GetSqlMoney(4).ToString();
                 float tien = float.Parse(soluong) * float.Parse(gia);
 
                 CTHD.Add(new ChiTietHoaDon(ten, soluong, gia, tien.ToString()));
