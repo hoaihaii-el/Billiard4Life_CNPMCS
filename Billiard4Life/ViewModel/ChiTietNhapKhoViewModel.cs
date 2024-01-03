@@ -149,16 +149,17 @@ namespace Billiard4Life.ViewModel
             cmd.CommandText = "SELECT * FROM CHITIETNHAP WHERE TenSanPham = N'" + itemName + "' ORDER BY NgayNhap DESC";
             cmd.Connection = sqlCon;
             SqlDataReader reader = cmd.ExecuteReader();
-            
+
+            ListIn.Clear();
             while (reader.Read())
             {
                 string ma = reader.GetString(0);
                 string ten = reader.GetString(1);
                 string donvi = reader.GetString(2);
-                string dongia = reader.GetString(3);
+                string dongia = reader.GetSqlMoney(3).ToString();
                 string nhom = reader.GetString(4);
-                string soluong = reader.GetString(5).ToString();
-                string date = reader.GetString(6);
+                string soluong = reader.GetDouble(5).ToString();
+                string date = reader.GetDateTime(6).ToShortDateString();
                 string nguon = reader.GetString(7);
                 string lienlac = reader.GetString(8);
                 ListIn.Add(new NhapKho(ma, ten, donvi, nhom, dongia, soluong, date, nguon, lienlac));
