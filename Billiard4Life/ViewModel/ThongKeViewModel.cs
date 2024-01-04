@@ -213,6 +213,46 @@ namespace Billiard4Life.ViewModel
 
             CloseConnect();
         }
+        public void GetCrowd()
+        {
+            OpenConnect();
+
+            SeriesCollectionCrowd.Clear();
+            LabelsCrowd.Clear();
+
+            if (CrowdMonth == null) return;
+
+            string month = GetMonth(CrowdMonth);
+            int[] crowd = new int[DateTime.DaysInMonth(DateTime.Now.Year, int.Parse(month))];
+            for (int i = 0; i < crowd.Length; i++)
+            {
+                crowd[i] = 0;
+                LabelsCrowd.Add("Ngày " + (i + 1).ToString());
+            }
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "SELECT DAY(NgayHD), COUNT(*) FROM HOADON WHERE MONTH(NgayHD) = " + month
+                + " AND YEAR(NgayHD) = " + DateTime.Now.Year + " AND TrangThai = N'Đã thanh toán' GROUP BY DAY(NgayHD)";
+            cmd.Connection = sqlCon;
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                int ngay = reader.GetInt32(0);
+                int value = reader.GetInt32(1);
+
+                crowd[ngay - 1] = value;
+            }
+            reader.Close();
+            SeriesCollectionCrowd.Add(new LineSeries
+            {
+                Title = "Thông lượng",
+                Values = new ChartValues<int>(crowd)
+            });
+
+            CloseConnect();
+        }
         
         public void GetListTime(string month)
         {
