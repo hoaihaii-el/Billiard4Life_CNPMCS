@@ -1,4 +1,4 @@
-﻿using Billiard4Life.Models;
+using Billiard4Life.Models;
 using iTextSharp.text;
 using System;
 using System.Collections.Generic;
@@ -184,13 +184,11 @@ namespace Billiard4Life.DataProvider
                 }
                 reader.Close();
 
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 MyMessageBox msb = new MyMessageBox(ex.Message);
                 msb.Show();
-            }
-            finally
+            } finally
             {
                 DBClose();
             }
