@@ -140,7 +140,11 @@ namespace Billiard4Life.ViewModel
             },
             (p) =>
             {
-                
+                IsAdding = false;
+                IsFirstTabVisible = false;
+                AddItem = MenuItem;
+                RefreshIngredients();
+                Ingredients_ForDishes = MenuDP.Flag.GetIngredientsForDish(MenuItem.ID);
                 foreach (ChiTietMon ctm in Ingredients_ForDishes)
                 {
                     foreach (Kho item in IngredientCollection)
