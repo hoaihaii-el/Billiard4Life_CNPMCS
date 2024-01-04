@@ -39,7 +39,28 @@ namespace Billiard4Life.ViewModel
             }
         }
         #endregion
-        
+
+        #region // Search bar
+        private string _Search;
+        public string Search
+        {
+            get => _Search;
+            set
+            {
+                _Search = value;
+                string strQuery;
+                OnPropertyChanged();
+                if (!String.IsNullOrEmpty(Search))
+                {
+                    strQuery = "SELECT * FROM KHACHHANG WHERE SDT LIKE N'%" + Search + "%'";
+                }
+                else
+                    strQuery = "SELECT * FROM KHACHHANG";
+                ListViewDisplay(strQuery);
+            }
+        }
+        #endregion
+
         public ICommand AddCM { get; set; }
         public ICommand DeleteCM { get; set; }
 
