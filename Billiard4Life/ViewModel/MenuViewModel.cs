@@ -39,7 +39,26 @@ namespace Billiard4Life.ViewModel
             _menuItemsView.Filter += MenuItems_Filter;
             _menuItemsView.SortDescriptions.Add(new SortDescription("FoodName", ListSortDirection.Ascending));
             //Command actions
-            
+            OrderFeature_Command = new RelayCommand<MenuItem>((p) => true, (p) => OrderAnItem(p.ID));
+            RemoveItemFeature_Command = new RelayCommand<SelectedMenuItem>((p) => true, (p) => RemoveAnItem(p));
+            ClearAllSelectedDishes = new RelayCommand<object>((p) =>
+            {
+                if (SelectedItems.Count == 0) return false;
+                return true;
+            }, (p) => {
+                MyMessageBox msb = new MyMessageBox("Bạn có muốn xoá tất cả những món đã chọn?", true);
+                msb.ShowDialog();
+                if (msb.ACCEPT() == false)
+                {
+                    return;
+                }
+                SelectedItems.Clear();
+                DecSubtotal = 0;
+                StrSubtotal = "0 VND";
+            });
+            SortingFeature_Command = new RelayCommand<object>((p) => true, (p) => {
+                SortMenuItems();
+            });
             Inform_Chef_Of_OrderedDishes = new RelayCommand<object>((p) =>
             {
                 return true;
