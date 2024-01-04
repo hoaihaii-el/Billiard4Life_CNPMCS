@@ -253,7 +253,236 @@ namespace Billiard4Life.ViewModel
 
             CloseConnect();
         }
+        public void GetStaffRevenue()
+        {
+            OpenConnect();
+
+            SeriesCollectionStaff.Clear();
+            LabelsStaff.Clear();
+
+            string month = GetMonth(StaffMonth);
+            string title = "";
+            string strQuerry = "";
+
+            if (month == "Tất cả")
+            {
+                strQuerry = "SELECT SUM(TriGia), hd.MaNV, TenNV FROM HOADON hd JOIN NHANVIEN nv ON hd.MaNV = nv.MaNV" +
+                    " WHERE TrangThai = N'Đã thanh toán' GROUP BY hd.MaNV, TenNV";
+                title = "Tất cả";
+            }
+            else
+            {
+                title = "T" + month;
+                strQuerry = "SELECT SUM(TriGia), hd.MaNV, TenNV FROM HOADON hd JOIN NHANVIEN nv ON hd.MaNV = nv.MaNV" +
+                    " WHERE MONTH(NgayHD) = " + month + " AND YEAR(NgayHD) = " + DateTime.Now.Year + "" +
+                    " AND TrangThai = N'Đã thanh toán' GROUP BY hd.MaNV, TenNV";
+            }
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = strQuerry;
+            cmd.Connection = sqlCon;
+            SqlDataReader reader = cmd.ExecuteReader();
+            List<double> profit = new List<double>();
+
+            while (reader.Read())
+            {
+                LabelsStaff.Add(reader.GetString(2));
+                profit.Add(reader.GetSqlMoney(0).ToDouble());
+            }
+            reader.Close();
+            SeriesCollectionStaff.Add(new ColumnSeries
+            {
+                Title = title,
+                Values = new ChartValues<double>(profit)
+            });
+
+            CloseConnect();
+        }
         
+        public void GetRevenue(string type)
+        {
+            OpenConnect();
+
+            SeriesCollectionRevenue.Clear();
+            LabelsRevenue.Clear();
+
+            List<double> paid = new List<double>();
+            List<double> profit = new List<double>();
+
+            double sumPaid = 0, sumProfit = 0, percent = 0;
+            if (type == "Ngày")
+            {
+                List<int> index = new List<int>();
+
+                DateTime dt1 = DateTime.Parse(DateBegin);
+                DateTime dt2 = DateTime.Parse(DateEnd);
+                for (DateTime dt = dt1; dt <= dt2; dt = dt.AddDays(1))
+                {
+                    index.Add(dt.Day);
+                    LabelsRevenue.Add(dt.Day.ToString());
+                    paid.Add(0);
+                    profit.Add(0);
+                }
+
+                // profit
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT DAY(NgayHD), SUM(TriGia) FROM HOADON WHERE TrangThai = N'Đã thanh toán' " +
+                    "AND Convert(Date, NgayHD) >= '" + DateBegin + "' AND Convert(Date, NgayHD) <= '" + DateEnd + "' GROUP BY DAY(NgayHD)";
+                cmd.Connection = sqlCon;
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int dt = reader.GetInt32(0);
+                    profit[index.IndexOf(dt)] = reader.GetSqlMoney(1).ToDouble();
+                    sumProfit += profit[index.IndexOf(dt)];
+                }
+                reader.Close();
+
+                // paid
+                cmd.CommandText = "SELECT DAY(NgayNhap), SUM(DonGia * SoLuong) FROM CHITIETNHAP " +
+                    "WHERE NgayNhap >= '" + DateBegin + "' AND NgayNhap <= '" + DateEnd + "' GROUP BY DAY(NgayNhap)";
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int dt = reader.GetInt32(0);
+                    paid[index.IndexOf(dt)] = reader.GetDouble(1);
+                    sumPaid += paid[index.IndexOf(dt)];
+                }
+                reader.Close();
+
+                cmd.CommandText = "SELECT SUM(Gia * SoLuong) FROM CTHD ct JOIN HOADON hd ON ct.SoHD = hd.SoHD " +
+                    "JOIN MENU m ON ct.MaMon = m.MaMon WHERE TrangThai = N'Đã thanh toán' " +
+                    "AND Convert(Date, NgayHD) >= '" + DateBegin + "' AND Convert(Date, NgayHD) <= '" + DateEnd + "'";
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    if (!reader.IsDBNull(0))
+                        percent = Convert.ToDouble(reader.GetDecimal(0));
+                }
+                reader.Close();
+            }
+
+            if (type == "Tháng")
+            {
+                if (TimeSelected == null) return;
+                string month = GetMonth(TimeSelected);
+
+                for (int i = 1; i <= DateTime.DaysInMonth(DateTime.Now.Year, int.Parse(month)); i++)
+                {
+                    LabelsRevenue.Add(i.ToString());
+                    paid.Add(0);
+                    profit.Add(0);
+                }
+
+                //profit 
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT DAY(NgayHD), SUM(TriGia) FROM HOADON WHERE TrangThai = N'Đã thanh toán' " +
+                    "AND MONTH(NgayHD) = " + month + " AND YEAR(NgayHD) = " + DateTime.Now.Year + " GROUP BY DAY(NgayHD)";
+                cmd.Connection = sqlCon;
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    profit[reader.GetInt32(0)] = reader.GetSqlMoney(1).ToDouble();
+                    sumProfit += profit[reader.GetInt32(0)];
+                }
+                reader.Close();
+
+                //paid
+                cmd.CommandText = "SELECT DAY(NgayNhap), SUM(DonGia * SoLuong) FROM CHITIETNHAP" +
+                    " WHERE MONTH(NgayNhap) = " + month + " AND YEAR(NgayNhap) = " + DateTime.Now.Year + " GROUP BY NgayNhap";
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    paid[reader.GetInt32(0)] = reader.GetDouble(1);
+                    sumPaid += paid[reader.GetInt32(0)];
+                }
+                reader.Close();
+
+                cmd.CommandText = "SELECT SUM(Gia * SoLuong) FROM CTHD ct JOIN HOADON hd ON ct.SoHD = hd.SoHD" +
+                    " JOIN MENU m ON ct.MaMon = m.MaMon WHERE TrangThai = N'Đã thanh toán'" +
+                    " AND MONTH(NgayHD) = " + month + " AND YEAR(NgayHD) = " + DateTime.Now.Year;
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    if (!reader.IsDBNull(0))
+                        percent = (double)Math.Round(reader.GetDecimal(0));
+                }
+                reader.Close();
+            }
+            if (type == "Năm")
+            {
+                if (TimeSelected == null) return;
+                string year = TimeSelected;
+                for (int i = 1; i <= 12; i++)
+                {
+                    LabelsRevenue.Add(i.ToString() + "/" + year);
+                    paid.Add(0);
+                    profit.Add(0);
+                }
+
+                //profit 
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT MONTH(NgayHD), SUM(TriGia) FROM HOADON WHERE TrangThai = N'Đã thanh toán'" +
+                    " AND YEAR(NgayHD) = " + year + " GROUP BY MONTH(NgayHD)";
+                cmd.Connection = sqlCon;
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    profit[reader.GetInt32(0)] = reader.GetSqlMoney(1).ToDouble();
+                    sumProfit += profit[reader.GetInt32(0)];
+                }
+                reader.Close();
+
+                //paid
+                cmd.CommandText = "SELECT MONTH(NgayNhap), SUM(DonGia * SoLuong) FROM CHITIETNHAP" +
+                    " WHERE YEAR(NgayNhap) = " + year + " GROUP BY MONTH(NgayNhap)";
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    paid[reader.GetInt32(0)] = reader.GetDouble(1);
+                    sumPaid += paid[reader.GetInt32(0)];
+                }
+                reader.Close();
+
+                cmd.CommandText = "SELECT SUM(Gia * SoLuong) FROM CTHD ct JOIN HOADON hd ON ct.SoHD = hd.SoHD" +
+                    " JOIN MENU m ON ct.MaMon = m.MaMon WHERE TrangThai = N'Đã thanh toán' AND YEAR(NgayHD) = " + year;
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    if (!reader.IsDBNull(0))
+                        percent = reader.GetDouble(0);
+                }
+                reader.Close();
+            }
+            SeriesCollectionRevenue.Add(new LineSeries
+            {
+                Title = "Thu",
+                Values = new ChartValues<double>(profit)
+            });
+            SeriesCollectionRevenue.Add(new LineSeries
+            {
+                Title = "Chi",
+                Values = new ChartValues<double>(paid)
+            });
+            SumOfPaid = String.Format("{0:0,0 VND}", Math.Round(sumPaid));
+            SumOfProfit = String.Format("{0:0,0 VND}", Math.Round(sumProfit));
+            PercentProOnRevenue = "  Sản phẩm\n/Doanh thu\n         " + Math.Round(percent * 100 / sumProfit, 2) + "%";
+
+            CloseConnect();
+        }
         public void GetListTime(string month)
         {
             ListTime.Clear();
