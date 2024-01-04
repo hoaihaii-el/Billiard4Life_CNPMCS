@@ -40,6 +40,87 @@ namespace Billiard4Life.ViewModel
             _menuItemsView.SortDescriptions.Add(new SortDescription("FoodName", ListSortDirection.Ascending));
             //Command actions
             
+            Inform_Chef_Of_OrderedDishes = new RelayCommand<object>((p) =>
+            {
+                return true;
+            }, (p) =>
+            {
+                string mess = "";
+                string tennl = String.Empty;
+                try
+                {
+                    if (SelectedTable != null)
+                    {
+                        if (SelectedItems.Count > 0)
+                        {
+                            HasEnoughIngredients();
+                            if (SelectedTable.Status == 0)
+                            {
+                                MyMessageBox typeOfCustomerAnnouncement = new MyMessageBox("Bạn muốn order thêm món ăn?", true);
+                                typeOfCustomerAnnouncement.ShowDialog();
+                                if (typeOfCustomerAnnouncement.ACCEPT() == false)
+                                {
+                                    mess = "Bàn hiện đang được sử dụng! Hãy chọn bàn khác";
+                                    return;
+                                }
+                            }
+                            if (_sumIngredients.Count == 0)
+                            {
+                                mess = "Hãy thêm thông tin nguyên liệu cho món!";
+                                return;
+                            }
+                            if (_selectedIngredientsName.Count > 0)
+                            {
+                                tennl += $"{_selectedIngredientsName[0]}";
+                                if (_selectedIngredientsName.Count > 1)
+                                {
+                                    for (int i = 1; i < _selectedIngredientsName.Count; i++)
+                                    {
+                                        tennl += $" , {_selectedIngredientsName[i]}";
+                                    }
+                                }
+                                mess = $"Không đủ nguyên liệu ({tennl}). Hãy nhập thêm!";
+                                return;
+                            }
+                            MaNV = getMaNV();
+                            MenuDP.Flag.PayABill(Convert.ToInt16(SelectedTable.NumOfTable), DecSubtotal, MaNV);
+                            string SoHD = MenuDP.Flag.GetCurrentBillIDForThisTable(Convert.ToInt16(SelectedTable.NumOfTable));
+                            foreach (SelectedMenuItem orderdish in SelectedItems)
+                            {
+                                MenuDP.Flag.Fill_CTHD(SoHD, orderdish.ID, orderdish.Quantity);
+                                MenuDP.Flag.UpdateKho(orderdish.ID, orderdish.Quantity);
+                            }
+                            mess = "Đặt bàn thành công!";
+                            SelectedItems.Clear();
+                            DecSubtotal = 0;
+                            StrSubtotal = "0 VND";
+                            _selectedIngredientsName.Clear();
+                            _sumIngredients.Clear();
+                        }
+                        else
+                        {
+                            MaNV = getMaNV();
+                            MenuDP.Flag.PayABill(Convert.ToInt16(SelectedTable.NumOfTable), 0, MaNV);
+                            mess = "Đã bắt đầu tính thời gian!";
+                        }
+                        Tables = MenuDP.Flag.GetTables();
+                    }
+                    else if (SelectedTable == null)
+                    {
+                        mess = "Bạn chưa chọn bàn";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MyMessageBox msb = new MyMessageBox(ex.Message);
+                    msb.Show();
+                }
+                finally
+                {
+                    MyMessageBox ms = new MyMessageBox(mess);
+                    ms.Show();
+                }
+            });
             _selectedItems = new ObservableCollection<SelectedMenuItem>();
             _comboBox_2Items = new ObservableCollection<string>();
             LoadCombobox_2Items();
