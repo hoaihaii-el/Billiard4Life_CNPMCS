@@ -39,7 +39,6 @@ namespace Billiard4Life.ViewModel
             }
         }
         #endregion
-
         #region // Search bar
         private string _Search;
         public string Search
@@ -60,7 +59,6 @@ namespace Billiard4Life.ViewModel
             }
         }
         #endregion
-
         public ICommand AddCM { get; set; }
         public ICommand DeleteCM { get; set; }
 
@@ -158,4 +156,3 @@ namespace Billiard4Life.ViewModel
         }
     }
 }
-

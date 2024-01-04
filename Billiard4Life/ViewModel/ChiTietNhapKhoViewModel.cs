@@ -149,7 +149,6 @@ namespace Billiard4Life.ViewModel
             cmd.CommandText = "SELECT * FROM CHITIETNHAP WHERE TenSanPham = N'" + itemName + "' ORDER BY NgayNhap DESC";
             cmd.Connection = sqlCon;
             SqlDataReader reader = cmd.ExecuteReader();
-
             ListIn.Clear();
             while (reader.Read())
             {

@@ -22,6 +22,7 @@ namespace Billiard4Life.View
         public ChiTietHoaDon(string SoHD)
         {
             InitializeComponent();
+            DataContext = new ViewModel.ChiTietHoaDonViewModel(SoHD);
         }
     }
 }

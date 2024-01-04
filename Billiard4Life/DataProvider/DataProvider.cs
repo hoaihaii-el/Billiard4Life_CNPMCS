@@ -17,7 +17,7 @@ namespace Billiard4Life.DataProvider
             try
             {
                 DBOpen();
-                SqlCommand cmd = new SqlCommand(cmdText, SqlCon);
+                SqlCommand cmd = new SqlCommand(cmdText, SqlCon);  
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(dt);
             }

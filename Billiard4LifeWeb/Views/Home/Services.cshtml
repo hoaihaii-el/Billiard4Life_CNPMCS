@@ -1,0 +1,51 @@
+﻿@model IEnumerable<MenuItem>
+
+ <!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 position-relative overlay-bottom">
+	<div class="d-flex flex-column align-items-center justify-content-center pt-0 pt-lg-5" style="min-height: 300px">
+		<h1 class="display-4 mb-3 mt-0 mt-lg-5 text-white text-uppercase">Dịch vụ</h1>
+	</div>
+</div>
+<!-- Page Header End -->
+
+<!-- Menu Start -->
+<div class="container-fluid pt-5">
+    <div class="container">
+        <div class="section-title">
+            <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Menu</h4>
+            <p>Billiard4Life sở hữu đội ngũ đầu bếp tài năng, mang đến cho bạn các món ăn ngon miệng để tận hưởng giữa những trận đấu căng thẳng. Menu đa dạng với đặc sản độc đáo và đồ uống phong phú sẽ làm hài lòng mọi khẩu vị.</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                @for (int i = 0; i < Model.Count() / 2; i++)
+                {
+                    <div class="row align-items-center mb-5">
+                        <div class="col-4 col-sm-3">
+                            <img class="w-100 rounded-circle mb-3 mb-sm-0" src="~/images/specials-3.png" alt="">
+                        </div>
+                        <div class="col-8 col-sm-9">
+                            <h4>@Model.ElementAt(i).TenMon</h4>
+                            <p class="m-0">@Model.ElementAt(i).Gia</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6">
+                @for (int i = Model.Count() / 2; i < Model.Count(); i++)
+                {
+                    <div class="row align-items-center mb-5">
+                        <div class="col-4 col-sm-3">
+                            <img class="w-100 rounded-circle mb-3 mb-sm-0" src="~/images/specials-3.png" alt="">
+                        </div>
+                        <div class="col-8 col-sm-9">
+                            <h4>@Model.ElementAt(i).TenMon</h4>
+                            <p class="m-0">@Model.ElementAt(i).Gia</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <a asp-action="PlaceOrder" asp-controller="Home" class="btn btn-secondary font-weight-bold py-2 px-4 mt-2">Đặt bàn</a>
+    </div>
+</div>
+<!-- Menu End -->

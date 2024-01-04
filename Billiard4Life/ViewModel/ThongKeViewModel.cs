@@ -79,38 +79,26 @@ namespace Billiard4Life.ViewModel
         public Func<double, string> Formatter { get; set; }
         public Func<double, string> CrowdFormatter { get; set; }
         private string _CrowdMonth;
-        public string CrowdMonth
-        {
-            get => _CrowdMonth;
-            set
-            {
+        public string CrowdMonth { get => _CrowdMonth; 
+            set { 
                 _CrowdMonth = value;
                 GetCrowd();
-                OnPropertyChanged();
-            }
-        }
+                OnPropertyChanged(); 
+            } }
         private string _StaffMonth;
-        public string StaffMonth
-        {
-            get => _StaffMonth;
-            set
-            {
+        public string StaffMonth { get => _StaffMonth; 
+            set { 
                 _StaffMonth = value;
                 GetStaffRevenue();
-                OnPropertyChanged();
-            }
-        }
+                OnPropertyChanged(); 
+            } }
         private string _TypeTableMonth;
-        public string TypeTableMonth
-        {
-            get => _TypeTableMonth;
-            set
-            {
+        public string TypeTableMonth { get => _TypeTableMonth; 
+            set { 
                 _TypeTableMonth = value;
                 GetPercentTypeTable();
-                OnPropertyChanged();
-            }
-        }
+                OnPropertyChanged(); 
+            } }
         private ObservableCollection<string> _ListMonths;
         public ObservableCollection<string> ListMonths { get => _ListMonths; set { _ListMonths = value; OnPropertyChanged(); } }
         private ObservableCollection<string> _ListCrowdMonths;
@@ -124,12 +112,9 @@ namespace Billiard4Life.ViewModel
         private ObservableCollection<string> _Types;
         public ObservableCollection<string> Types { get => _Types; set { _Types = value; OnPropertyChanged(); } }
         private string _TypeSelected;
-        public string TypeSelected
-        {
-            get => _TypeSelected;
-            set
-            {
-                _TypeSelected = value;
+        public string TypeSelected { get => _TypeSelected; 
+            set { 
+                _TypeSelected = value; 
                 if (TypeSelected == "Theo ngày")
                 {
                     DateBeginVisible = "Visible";
@@ -154,8 +139,8 @@ namespace Billiard4Life.ViewModel
                     GetListTime("Năm");
                     TimeSelected = ListTime[ListTime.Count - 1];
                 }
-                OnPropertyChanged();
-            }
+                OnPropertyChanged(); 
+            } 
         }
         private string _PercentProOnRevenue;
         public string PercentProOnRevenue { get => _PercentProOnRevenue; set { _PercentProOnRevenue = value; OnPropertyChanged(); } }
@@ -168,16 +153,13 @@ namespace Billiard4Life.ViewModel
         private ObservableCollection<string> _ListTime;
         public ObservableCollection<string> ListTime { get => _ListTime; set { _ListTime = value; OnPropertyChanged(); } }
         private string _TimeSelected;
-        public string TimeSelected
-        {
-            get => _TimeSelected;
-            set
-            {
+        public string TimeSelected { get => _TimeSelected; 
+            set { 
                 _TimeSelected = value;
                 if (TypeSelected == "Theo tháng") GetRevenue("Tháng");
                 if (TypeSelected == "Theo năm") GetRevenue("Năm");
-                OnPropertyChanged();
-            }
+                OnPropertyChanged(); 
+            } 
         }
 
         public ThongKeViewModel()
@@ -316,7 +298,7 @@ namespace Billiard4Life.ViewModel
             else
             {
                 strQuerry = "SELECT DISTINCT COUNT(*), LoaiBan FROM HOADON hd JOIN BAN b ON hd.SoBan = b.SoBan " +
-                    "WHERE MONTH(NgayHD) = " + month + " AND YEAR(NgayHD) = " + DateTime.Now.Year
+                    "WHERE MONTH(NgayHD) = " + month + " AND YEAR(NgayHD) = " + DateTime.Now.Year 
                     + " AND hd.TrangThai = N'Đã thanh toán' GROUP BY LoaiBan";
             }
 
@@ -337,7 +319,7 @@ namespace Billiard4Life.ViewModel
             }
             reader.Close();
 
-            CloseConnect();
+            CloseConnect(); 
         }
         public void GetRevenue(string type)
         {
@@ -411,13 +393,13 @@ namespace Billiard4Life.ViewModel
                 if (TimeSelected == null) return;
                 string month = GetMonth(TimeSelected);
 
-                for (int i = 1; i <= DateTime.DaysInMonth(DateTime.Now.Year, int.Parse(month)); i++)
+                for (int i = 1; i <= DateTime.DaysInMonth(DateTime.Now.Year, int.Parse(month)); i++) 
                 {
                     LabelsRevenue.Add(i.ToString());
                     paid.Add(0);
                     profit.Add(0);
                 }
-
+                
                 //profit 
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandType = CommandType.Text;
@@ -453,7 +435,7 @@ namespace Billiard4Life.ViewModel
                 while (reader.Read())
                 {
                     if (!reader.IsDBNull(0))
-                        percent = (double)Math.Round(reader.GetDecimal(0));
+                        percent = (double) Math.Round(reader.GetDecimal(0));
                 }
                 reader.Close();
             }
@@ -564,7 +546,7 @@ namespace Billiard4Life.ViewModel
             }
             return month;
         }
-
+        
         private void OpenConnect()
         {
             sqlCon = new SqlConnection(strCon);

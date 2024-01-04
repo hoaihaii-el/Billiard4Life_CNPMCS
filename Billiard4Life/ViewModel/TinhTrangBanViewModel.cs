@@ -142,11 +142,11 @@ namespace Billiard4Life.ViewModel
         #region properties
         public ObservableCollection<Table> Tables { get { return _tables; } set { _tables = value; OnPropertyChanged(); } }
         public KhuyenMai KM { get { return km; } set { km = value; OnPropertyChanged(); } }
-        public string CustomerPhoneNumber
-        {
-            get { return customerPhoneNumber; }
-            set
-            {
+        public string CustomerPhoneNumber 
+        { 
+            get { return customerPhoneNumber; } 
+            set 
+            { 
                 customerPhoneNumber = value;
                 if (!string.IsNullOrEmpty(CustomerPhoneNumber))
                 {
@@ -160,13 +160,13 @@ namespace Billiard4Life.ViewModel
                     }
                 }
                 else MemberDiscount = "-00 VNĐ";
-                OnPropertyChanged();
-            }
+                OnPropertyChanged(); 
+            } 
         }
         public ObservableCollection<SelectedMenuItems> SelectedItems { get { return _selectedItems; } set { _selectedItems = value; } }
         public ObservableCollection<string> EmptyTables { get { return _emptytables; } set { _emptytables = value; } }
         public ObservableCollection<string> Combobox_Option_KindOfTables { get { return _combobox_option_kindoftables; } set { _emptytables = value; } }
-        public ICollectionView TableView { get { return this._tables_view.View; } }
+        public ICollectionView TableView { get { return this._tables_view.View; }}
         public TimeSpan TimeSpanPlayer { get { return timeSpanPlayer; } set { timeSpanPlayer = value; OnPropertyChanged(); } }
         public Decimal TienBan { get { return tienBan; } set { tienBan = value; OnPropertyChanged(); } }
         public string S_TienBan { get { return str_tienBan; } set { str_tienBan = value; OnPropertyChanged(); } }
@@ -182,14 +182,14 @@ namespace Billiard4Life.ViewModel
         }
         public ObservableCollection<string> ListPhoneCustomer
         {
-            get => _ListPhoneCustomer;
+            get =>  _ListPhoneCustomer;
             set
             {
                 _ListPhoneCustomer = value;
                 OnPropertyChanged();
             }
         }
-        public Decimal D_TotalDiscount { get { return totalDiscount; } set { totalDiscount = value; OnPropertyChanged(); } }
+        public Decimal D_TotalDiscount { get { return totalDiscount; } set { totalDiscount = value; OnPropertyChanged();} }
         public Decimal D_OverAllBill { get { return overallBill; } set { overallBill = value; OnPropertyChanged(); } }
         public Decimal D_MemberDiscount { get => s_memberdiscount; set { s_memberdiscount = value; OnPropertyChanged(); } }
         public decimal Dec_sumofbill
@@ -231,7 +231,7 @@ namespace Billiard4Life.ViewModel
             {
                 return s_overallBill;
             }
-            set
+             set
             {
                 s_overallBill = value;
                 OnPropertyChanged();
@@ -271,7 +271,7 @@ namespace Billiard4Life.ViewModel
         {
             foreach (Table t in _tables)
             {
-                if (!Combobox_Option_KindOfTables.Contains(t.KindOfTable))
+                if(!Combobox_Option_KindOfTables.Contains(t.KindOfTable))
                 {
                     Combobox_Option_KindOfTables.Add(t.KindOfTable);
                 }
@@ -425,7 +425,7 @@ namespace Billiard4Life.ViewModel
 
         public void Update()
         {
-            KM = KhuyenMaiDP.Flag.GetKhuyenMaisBasedOnMucApDung(Dec_sumofbill);
+            KM = KhuyenMaiDP.Flag.GetKhuyenMaisBasedOnMucApDung(Dec_sumofbill + TienBan);
         }
         public void PrintBill(int BillID, int TableID)
         {
@@ -501,7 +501,7 @@ namespace Billiard4Life.ViewModel
                                         pdfTable.AddCell(new Phrase(gia[i], f));
                                     }
                                 }
-
+                                
 
                                 using (FileStream stream = new FileStream(sfd.FileName, FileMode.Create))
                                 {
@@ -646,6 +646,6 @@ namespace Billiard4Life.ViewModel
             EmptyTables.Clear();
             LoadEmptyTables();
         }
-        #endregion
+#endregion
     }
 }

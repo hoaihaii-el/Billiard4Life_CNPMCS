@@ -145,7 +145,7 @@ namespace Billiard4Life.ViewModel
                     ws.Cells.Style.Font.Name = "Times New Roman";
 
 
-                    string[] columnHeader = { "Tiền mặt", "Thẻ ngân hàng", "Chuyển khoản ngân hàng", "Chuyển khoản MOMO" };
+                    string[] columnHeader = { "Tiền mặt", "Thẻ ngân hàng", "Chuyển khoản ngân hàng", "Chuyển khoản MOMO"};
 
                     int countColumn = columnHeader.Count();
                     ws.Cells[1, 1].Value = "Tổng kết ca ngày " + DateTime.Now.Day + "-" + DateTime.Now.Month + "-" + DateTime.Now.Year + " của "

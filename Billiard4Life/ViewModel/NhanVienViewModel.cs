@@ -115,11 +115,11 @@ namespace Billiard4Life.ViewModel
             #region //edit command
             EditCM = new RelayCommand<object>((p) =>
             {
-                if (String.IsNullOrEmpty(NhanVienItem.HoTen) || String.IsNullOrEmpty(NhanVienItem.ChucVu)
+                if (String.IsNullOrEmpty(NhanVienItem.HoTen) || String.IsNullOrEmpty(NhanVienItem.ChucVu) 
                 || String.IsNullOrEmpty(Fulltime) || String.IsNullOrEmpty(NhanVienItem.NgayVaoLam))
                     return false;
                 if (!isNumber(NhanVienItem.SDT)) return false;
-                if ((!String.IsNullOrEmpty(NhanVienItem.TaiKhoan) && String.IsNullOrEmpty(NhanVienItem.MatKhau))
+                if ((!String.IsNullOrEmpty(NhanVienItem.TaiKhoan) && String.IsNullOrEmpty(NhanVienItem.MatKhau)) 
                 || (String.IsNullOrEmpty(NhanVienItem.TaiKhoan) && !String.IsNullOrEmpty(NhanVienItem.MatKhau))) return false;
                 return true;
 

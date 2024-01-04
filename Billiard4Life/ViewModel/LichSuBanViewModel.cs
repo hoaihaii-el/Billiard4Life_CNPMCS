@@ -59,8 +59,7 @@ namespace Billiard4Life.ViewModel
         public int StaffIndexSelected
         {
             get => _StaffIndexSelected;
-            set
-            {
+            set { 
                 _StaffIndexSelected = value;
                 OnPropertyChanged();
                 ListViewDisplay(ListStaffID[StaffIndexSelected]);
@@ -102,10 +101,10 @@ namespace Billiard4Life.ViewModel
             DateEnd = DateTime.Now.ToShortDateString();
             ListViewDisplay("Tất cả");
 
-            DetailCM = new RelayCommand<object>((p) =>
+            DetailCM = new RelayCommand<object>((p) => 
             {
                 if (Selected == null) return false;
-                return true;
+                return true; 
             }, (p) =>
             {
                 Billiard4Life.View.ChiTietHoaDon cthd = new View.ChiTietHoaDon(Selected.SoHD);
@@ -170,7 +169,7 @@ namespace Billiard4Life.ViewModel
                     ws.Cells.Style.Font.Name = "Times New Roman";
 
 
-                    string[] columnHeader = { "Số hóa đơn", "Tên khách hàng", "Số giờ", "Ngày hóa đơn", "Tên món",
+                    string[] columnHeader = { "Số hóa đơn", "Tên khách hàng", "Số giờ", "Ngày hóa đơn", "Tên món", 
                         "Số lượng", "Đơn giá(VNĐ)", "Thành tiền(VNĐ)", "Tổng tiền(VNĐ)" };
                     ws.Column(1).Width = 12;
                     ws.Column(2).Width = 17;
@@ -211,7 +210,6 @@ namespace Billiard4Life.ViewModel
                         ws.Cells[row, countColumn].Value = temp.TriGia;
 
                         ObservableCollection<ChiTietHoaDon> detailBills = HoaDonDP.Flag.GetDetailBill(temp.SoHD);
-
                         foreach (ChiTietHoaDon cthd in detailBills)
                         {
                             row++;

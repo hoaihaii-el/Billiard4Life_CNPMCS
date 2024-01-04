@@ -16,7 +16,6 @@ using OfficeOpenXml.Style;
 using System.Linq;
 using OfficeOpenXml;
 
-
 namespace Billiard4Life.ViewModel
 {
     public class KhoViewModel : BaseViewModel
@@ -73,7 +72,7 @@ namespace Billiard4Life.ViewModel
                     if (GroupSelected == "Tất cả")
                         ListViewDisplay("SELECT * FROM KHO WHERE Xoa = 0");
                     else
-                        ListViewDisplay("SELECT * FROM KHO WHERE Xoa = 0 AND NhomSanPham = N'" + GroupSelected + "'");
+                    ListViewDisplay("SELECT * FROM KHO WHERE Xoa = 0 AND NhomSanPham = N'" + GroupSelected + "'");
                 }
                 OnPropertyChanged();
             }
@@ -97,10 +96,10 @@ namespace Billiard4Life.ViewModel
             GroupSelected = "Tất cả";
 
 
-            DetailCM = new RelayCommand<object>((p) =>
+            DetailCM = new RelayCommand<object>((p) => 
             {
                 if (Selected == null) return false;
-                return true;
+                return true; 
             }, (p) =>
             {
                 Billiard4Life.View.ChiTietNhapKho ctn = new View.ChiTietNhapKho(Selected.TenSanPham);
@@ -395,7 +394,7 @@ namespace Billiard4Life.ViewModel
                             col++;
                         }
 
-                        foreach (NhapKho temp in ListIn)
+                        foreach(NhapKho temp in ListIn)
                         {
                             col = 1;
                             if (temp.TenSP != ws.Cells[row, 2].Value.ToString()) row++;
@@ -415,7 +414,7 @@ namespace Billiard4Life.ViewModel
                         ws.Cells[row, 4].Value = "Tổng số tiền";
                         ws.Cells[row, 4].Style.Font.Bold = true;
                         ws.Cells[row + 1, 4].Value = SumOfPaid.ToString();
-
+                        
 
                         Byte[] bin = x.GetAsByteArray();
                         File.WriteAllBytes(filePath, bin);
@@ -456,7 +455,6 @@ namespace Billiard4Life.ViewModel
             cmd.CommandText = strQuery;
             cmd.Connection = sqlCon;
             SqlDataReader reader = cmd.ExecuteReader();
-
             ListWareHouse.Clear();
             while (reader.Read())
             {

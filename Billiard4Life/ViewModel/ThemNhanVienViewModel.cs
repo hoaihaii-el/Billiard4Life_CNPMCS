@@ -22,17 +22,17 @@ namespace Billiard4Life.ViewModel
         public NhanVien AddItem
         {
             get { return _AddItem; }
-            set { _AddItem = value; OnPropertyChanged(); }
+            set { _AddItem = value; OnPropertyChanged();}
         }
         private string _Fulltime;
-        public string Fulltime
+        public string Fulltime 
         {
-            get => _Fulltime;
-            set
-            {
+            get => _Fulltime; 
+            set 
+            { 
                 _Fulltime = value; OnPropertyChanged();
                 if (Fulltime == "Full-time") AddItem.Fulltime = true; else AddItem.Fulltime = false;
-            }
+            } 
         }
 
         public ICommand AddCM { get; set; }
@@ -54,7 +54,7 @@ namespace Billiard4Life.ViewModel
             });
             AddCM = new RelayCommand<object>((p) =>
             {
-                return IfCanAddStaff();
+                return IfCanAddStaff();   
             }, (p) =>
             {
                 NhanVienDP.Flag.AddStaff(AddItem);

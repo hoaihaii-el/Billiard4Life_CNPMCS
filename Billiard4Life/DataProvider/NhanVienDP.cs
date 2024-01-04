@@ -266,9 +266,9 @@ public class NhanVienDP : DataProvider
 
         if (IsChecked(MaNV) == false) cmd.CommandText = "INSERT INTO CHITIETCHAMCONG VALUES(@manv, @ngaycc, @sogiocong, N'')";
         else cmd.CommandText = "UPDATE CHITIETCHAMCONG SET SoGioCong = SoGioCong + @sogiocong WHERE MaNV = @manv AND NgayCC = @ngaycc";
-
+        
         DBOpen();
-
+        
         //cmd.Parameters.AddWithValue("@manv", MaNV);
         cmd.Parameters.AddWithValue("@ngaycc", BatDauCa.Date);
         cmd.Parameters.AddWithValue("@sogiocong", ConvertTotalSecondToHour(SoGio));

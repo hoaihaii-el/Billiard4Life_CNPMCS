@@ -35,10 +35,10 @@ namespace Billiard4Life.ViewModel
                 if (p == null) return;
                 p.Close();
             });
-            AddCM = new RelayCommand<object>((p) =>
+            AddCM = new RelayCommand<object>((p) => 
             {
                 if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Phone)) return false;
-                return true;
+                return true; 
             }, (p) =>
             {
                 OpenConnect();
@@ -58,8 +58,8 @@ namespace Billiard4Life.ViewModel
                 {
                     MyMessageBox msb = new MyMessageBox("Thêm không thành công!");
                     msb.ShowDialog();
-                }
-
+                }    
+                
                 ID = GetHighestID();
                 Name = "";
                 Phone = "";

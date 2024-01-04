@@ -46,7 +46,7 @@ namespace Billiard4Life.ViewModel
 
             SelectAllKhuyenMai_Command = new RelayCommand<CheckBox>((p) => true, (p) =>
             {
-                if (p.IsChecked == true)
+                if(p.IsChecked == true)
                 {
 
                 }
@@ -83,12 +83,12 @@ namespace Billiard4Life.ViewModel
                         MyMessageBox msb = new MyMessageBox(mess);
                         msb.Show();
                     }
-                }
+                }    
             });
 
             AddKhuyenMaiItem_Command = new RelayCommand<Grid>((p) =>
             {
-                if (AddKhuyenMaiItem.isNullOrEmpty())
+                if(AddKhuyenMaiItem.isNullOrEmpty())
                 {
                     return false;
                 }
@@ -103,12 +103,12 @@ namespace Billiard4Life.ViewModel
                         mess = "Thông tin khuyến mãi này đã bị trùng (Mã khuyến mãi)";
                         return;
                     }
-                    if (!NgayBDBeHonNgayKT(AddKhuyenMaiItem.NgayBatDau, AddKhuyenMaiItem.NGayKetThuc))
+                    if(!NgayBDBeHonNgayKT(AddKhuyenMaiItem.NgayBatDau, AddKhuyenMaiItem.NGayKetThuc))
                     {
                         mess = "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu";
                         return;
                     }
-                    if (!percentageValidation(AddKhuyenMaiItem.GiamGia))
+                    if(!percentageValidation(AddKhuyenMaiItem.GiamGia))
                     {
                         mess = "Giá trị giảm phải lớn hơn 0 và bé hơn hoặc bằng 100";
                         return;
@@ -117,12 +117,10 @@ namespace Billiard4Life.ViewModel
                     KhuyenMais.Add(new KhuyenMai(AddKhuyenMaiItem.MAKM, AddKhuyenMaiItem.TenKM, AddKhuyenMaiItem.MucApDung, AddKhuyenMaiItem.TrangThai, AddKhuyenMaiItem.NgayBatDau, AddKhuyenMaiItem.NGayKetThuc, AddKhuyenMaiItem.MoTa, AddKhuyenMaiItem.GiamGia));
                     AddKhuyenMaiItem.clear();
                     mess = "Thêm thành công";
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     mess = ex.Message;
-                }
-                finally
+                } finally
                 {
                     MyMessageBox msb = new MyMessageBox(mess);
                     msb.Show();
@@ -154,12 +152,10 @@ namespace Billiard4Life.ViewModel
                     }
                     mess = "Sửa thành công";
                     OnPropertyChanged();
-                }
-                catch (Exception ex)
+                } catch(Exception ex)
                 {
                     mess = ex.Message;
-                }
-                finally
+                } finally
                 {
                     MyMessageBox msb = new MyMessageBox(mess);
                     msb.Show();
@@ -186,21 +182,18 @@ namespace Billiard4Life.ViewModel
         public ObservableCollection<string> TrangThais { get { return trangthais; } set { trangthais = value; OnPropertyChanged(); } }
         public ICollectionView KhuyenMaiView { get { return khuyenmai_view.View; } }
         public string SearchText { get { return _searchText; } set { _searchText = value; this.khuyenmai_view.View.Refresh(); OnPropertyChanged(); } }
-        public bool IsAllSelected
-        {
-            get
-            {
-                return _isAllSelected;
-            }
-            set
-            {
-                _isAllSelected = value;
-                foreach (var item in KhuyenMais)
+        public bool IsAllSelected { 
+            get { 
+                return _isAllSelected; 
+            } 
+            set { 
+                _isAllSelected = value; 
+                foreach(var item in KhuyenMais)
                 {
                     item.IsSelected = value;
                 }
-                OnPropertyChanged();
-            }
+                OnPropertyChanged(); 
+            } 
         }
         #endregion
 
@@ -216,9 +209,9 @@ namespace Billiard4Life.ViewModel
         #region methods
         private bool KhuyenMaiIsListed()
         {
-            foreach (var item in KhuyenMais)
+            foreach(var item in KhuyenMais)
             {
-                if (item.MAKM == AddKhuyenMaiItem.MAKM)
+                if(item.MAKM == AddKhuyenMaiItem.MAKM)
                 {
                     return true;
                 }
@@ -236,7 +229,7 @@ namespace Billiard4Life.ViewModel
             DateTime startdate = Convert.ToDateTime(ngaybd);
             DateTime enddate = Convert.ToDateTime(ngaykt);
 
-            if (DateTime.Compare(startdate, enddate) < 0 || DateTime.Compare(startdate, enddate) == 0)
+            if(DateTime.Compare(startdate, enddate) < 0 || DateTime.Compare(startdate, enddate) == 0)
             {
                 return true;
             }
@@ -254,7 +247,7 @@ namespace Billiard4Life.ViewModel
                 return;
             }
 
-            KhuyenMai? item = e.Item as KhuyenMai;
+            KhuyenMai ?item = e.Item as KhuyenMai;
             if (item.TenKM.RemoveDiacritics().ToLower().Contains(SearchText.RemoveDiacritics().ToLower()))
             {
                 e.Accepted = true;
