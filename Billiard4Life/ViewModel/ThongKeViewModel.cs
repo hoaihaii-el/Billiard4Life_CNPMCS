@@ -299,7 +299,46 @@ namespace Billiard4Life.ViewModel
 
             CloseConnect();
         }
-        
+        public void GetPercentTypeTable()
+        {
+            OpenConnect();
+
+            SeriesCollectionTypeTable.Clear();
+
+            string month = GetMonth(TypeTableMonth);
+            string strQuerry = "";
+
+            if (month == "Tất cả")
+            {
+                strQuerry = "SELECT DISTINCT COUNT(*), LoaiBan FROM HOADON hd JOIN BAN b ON hd.SoBan = b.SoBan " +
+                    "WHERE hd.TrangThai = N'Đã thanh toán' GROUP BY LoaiBan";
+            }
+            else
+            {
+                strQuerry = "SELECT DISTINCT COUNT(*), LoaiBan FROM HOADON hd JOIN BAN b ON hd.SoBan = b.SoBan " +
+                    "WHERE MONTH(NgayHD) = " + month + " AND YEAR(NgayHD) = " + DateTime.Now.Year
+                    + " AND hd.TrangThai = N'Đã thanh toán' GROUP BY LoaiBan";
+            }
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = strQuerry;
+            cmd.Connection = sqlCon;
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                SeriesCollectionTypeTable.Add(new PieSeries
+                {
+                    Title = reader.GetString(1),
+                    Values = new ChartValues<ObservableValue> { new ObservableValue(reader.GetInt32(0)) },
+                    DataLabels = true
+                });
+            }
+            reader.Close();
+
+            CloseConnect();
+        }
         public void GetRevenue(string type)
         {
             OpenConnect();
