@@ -39,7 +39,126 @@ namespace Billiard4Life.ViewModel
             addItem = new Models.MenuItem();
             MenuItem = new Models.MenuItem();
             AddItem.FoodImage = converting("pack://application:,,,/images/menu_default_image.jpg");
-            
+            #region Command executes
+            AddOneMenuDish = new RelayCommand<Object>((p) => true, (p) =>
+            {
+                MenuAdmin_ThemMon window = new MenuAdmin_ThemMon(true);
+                RefreshIngredients();
+                window.DataContext = this;
+                IsFirstTabVisible = true;
+                IsAdding = true;
+                AddItem.ID = MenuDP.Flag.AutoIDMenu();
+                window.ShowDialog();
+            });
+            RemoveDish_Command = new RelayCommand<object>((p) =>
+            {
+                if (MenuItem == null) return false;
+                if (MenuItem.FoodImage == null
+                || MenuItem.FoodName == ""
+                || MenuItem.ID == "") return false;
+                return true;
+            }, (p) =>
+            {
+                MyMessageBox msb = new MyMessageBox($"Bạn có muốn xoá món này?", true);
+                msb.ShowDialog();
+                if (msb.ACCEPT() == true)
+                {
+                    MenuDP.Flag.RemoveDish(MenuItem.ID);
+                    MenuItems.Remove(MenuItem);
+                    MyMessageBox msb2 = new MyMessageBox("Xoá thành công!");
+                    msb2.Show();
+                }
+            });
+            AddDish_Command = new RelayCommand<Button>((p) =>
+            {
+                if (AddItem.IsNullOrEmpty()) return false;
+                return true;
+            }, (p) =>
+            {
+                if (IsAnyIngredientSelected() == false)
+                {
+                    MyMessageBox msb = new MyMessageBox("Vui lòng chọn nguyên liệu cần thiết và định lượng!");
+                    msb.ShowDialog();
+                }
+                else
+                if (IsIngredientsValid() == false)
+                {
+                    MyMessageBox msb = new MyMessageBox("Định lượng phải lớn hơn 0!");
+                    msb.ShowDialog();
+                }
+                else
+                {
+                    if (IsAdding)
+                    {
+                        MenuDP.Flag.AddDish(AddItem);
+                        MenuItems.Add(new Models.MenuItem(AddItem.ID, AddItem.FoodName, AddItem.Price, AddItem.FoodImage));
+                        foreach (Kho ctm in IngredientCollection)
+                        {
+                            if (ctm.DuocChon == true) MenuDP.Flag.SaveIngredients(new ChiTietMon(ctm.TenSanPham, AddItem.ID, ctm.DinhLuong));
+                        }
+                        RefreshIngredients();
+                        AddItem.Clear();
+                        AddItem.ID = MenuDP.Flag.AutoIDMenu();
+                        MyMessageBox msb = new MyMessageBox("Thêm thành công!");
+                        msb.Show();
+                    }
+                    else
+                    {
+                        MenuDP.Flag.EditDishInfo(AddItem);
+                        MenuDP.Flag.RemoveIngredients(AddItem.ID);
+                        foreach (Kho ctm in IngredientCollection)
+                        {
+                            if (ctm.DuocChon == true) MenuDP.Flag.SaveIngredients(new ChiTietMon(ctm.TenSanPham, AddItem.ID, ctm.DinhLuong));
+                        }
+                        MyMessageBox msb = new MyMessageBox("Sửa thành công!");
+                        msb.Show();
+                    }
+                }
+            });
+            AddImage_Command = new RelayCommand<object>((p) => true, (p) =>
+            {
+                OpenFileDialog op = new OpenFileDialog();
+                op.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" + "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" + "Portable Network Graphic (*.png)|*.png";
+                op.Title = "Thêm ảnh món ăn";
+                if (op.ShowDialog() == DialogResult.OK)
+                {
+                    BitmapImage bmi = new BitmapImage();
+                    bmi.BeginInit();
+                    bmi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    bmi.CacheOption = BitmapCacheOption.OnLoad;
+                    bmi.UriSource = new Uri(op.FileName);
+                    bmi.EndInit();
+                    AddItem.FoodImage = bmi;
+                }
+            });
+
+            #region Thêm nguyên liệu command execution
+            EditIngredient_Command = new RelayCommand<object>((p) =>
+            {
+                if (MenuItem == null) return false;
+                return true;
+            },
+            (p) =>
+            {
+                
+                foreach (ChiTietMon ctm in Ingredients_ForDishes)
+                {
+                    foreach (Kho item in IngredientCollection)
+                    {
+                        if (ctm.TenNL == item.TenSanPham)
+                        {
+                            item.DuocChon = true;
+                            item.DinhLuong = ctm.SoLuong;
+                        }
+                    }
+                }
+                MenuAdmin_ThemMon IngreAddView = new(false);
+                IngreAddView.DataContext = this;
+                IngreAddView.ShowDialog();
+            });
+
+            #endregion
+            #endregion
 
         }
 
