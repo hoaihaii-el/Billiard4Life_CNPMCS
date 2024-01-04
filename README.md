@@ -1,4 +1,4 @@
-# Billiard4Life_WPF_ASPDOTCOREMVC
+# Billiard4Life_WPF_ASP.NETCOREMVC
 SE214.O11 - Công nghệ phần mềm chuyên sâu - NHÓM 7
 
 # Giới thiệu ứng dụng
